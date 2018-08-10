@@ -1,5 +1,5 @@
 # K-Nearest-Neighbour-kNN-
-Implementing the kNN methodology
+Predicting/Recommending the Category of Object Utilizing the kNN methodology on the basis of similarity. 
 
 Normally projects such as these are implemented in Python or R. I wanted to test out how difficult it would be to do this in Java 
 (in the same time, increase my proficieny in Java). This is an implementation of the kNN, currently the approach is using the Eucladian Distance 
