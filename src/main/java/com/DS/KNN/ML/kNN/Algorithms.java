@@ -43,8 +43,8 @@ public class Algorithms {
 
         List<String> testDataList = dataSet.getTestData();
         List<String> trainingDataList = dataSet.getTrainingData();
-        Double testDataED = getCustomEucladianDistance(testDataList, 3);
-        Double trainingDataED = getCustomEucladianDistance(trainingDataList, 3);
+        Double testDataED = getCustomEucladianDistance(testDataList, range);
+        Double trainingDataED = getCustomEucladianDistance(trainingDataList, range);
         HashMap<String,Double> mapEd = new HashMap<>();
         mapEd.put("test",testDataED);
         mapEd.put("training",trainingDataED);
@@ -106,6 +106,33 @@ public class Algorithms {
         return new Double(0);
     }
 
+
+    public Double checkAccuracyInRange(Map<String,Integer> votedResponse, String correctCategory) {
+        HashMap votedCat = new HashMap();
+        Double correctVote = new Double(0);
+        Double totalVotes = new Double(0);
+        List<Double> correctvotes = new ArrayList<>();
+        for(Map.Entry entry : votedResponse.entrySet()) {
+
+            String category = entry.getKey().toString();
+            Integer votes = Integer.valueOf(entry.getValue().toString());
+            Double categoryRange = Double.parseDouble(correctCategory);
+            Double maxRange = categoryRange + categoryRange *0.110;
+            Double minRange = categoryRange *0.90;
+
+            if (Double.parseDouble(entry.getKey().toString()) > minRange
+                    && Double.parseDouble(entry.getKey().toString()) < maxRange) {
+
+                correctVote = Double.valueOf(votes);
+                correctvotes.add(Double.parseDouble(entry.getKey().toString()));
+            }
+            totalVotes += votes;
+        }
+        if(correctVote != 0) {
+            return correctvotes.size()/totalVotes;
+        }
+        return new Double(0);
+    }
     }
 
 

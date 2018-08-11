@@ -10,7 +10,7 @@ import java.util.List;
 public class DataSet {
 
     @Id
-    private BigInteger id;
+    private String id;
     private List<String> trainingData;
     private List<String> TestData;
     private Double accuracy;
@@ -29,11 +29,11 @@ public class DataSet {
         this.accuracy = accuracy;
     }
 
-    public BigInteger getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(String id) {
         this.id = id;
     }
 

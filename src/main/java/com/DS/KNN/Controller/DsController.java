@@ -22,10 +22,12 @@ public class DsController {
             try {
                 int index = 4;
                 int start = 0;
-                while(start< index) {
-                    kNNService.kNNEucladianDistance();
+//                while(start< index) {
+//                    kNNService.kNNEucladianDistance();
+                    kNNService.PredictPrice();
+//                    kNNService.kNNEucladianDistanceResultRange();
                     start++;
-                }
+//                }
 
 
             } catch (Exception e) {

@@ -35,6 +35,32 @@ public class Neighbours {
         return mapEntryList;
     }
 
+    public List<Object> getNeighboursRange(List<String> trainingSetList, String testInstance, int results2Return) {
+
+        Algorithms algorithms = new Algorithms();
+        HashMap distance = new HashMap();
+        HashMap neighbours =  new LinkedHashMap();
+        for(String trainingSet : trainingSetList) {
+
+            Double eucladianDistance = algorithms.getEucladianDistance(trainingSet, testInstance, 5);
+            distance.put(trainingSet,eucladianDistance);
+
+        }
+
+        List<Object> mapEntryList = new ArrayList<>();
+        Map<String, Integer> sortedMapAsc = sortByComparator(distance, true);
+        Map.Entry<String, Integer> nextItem = sortedMapAsc.entrySet().iterator().next();
+        for(int x = 0; x < results2Return; x ++) {
+
+
+            Object mapData = sortedMapAsc.entrySet().toArray()[x];
+            mapEntryList.add(mapData);
+
+        }
+
+        return mapEntryList;
+    }
+
     private static Map<String, Double> sortByComparator(Map<String, Double> unsortMap, final boolean order)
     {
 

@@ -37,6 +37,7 @@ public class SpringBatch {
     @Autowired
     DataSetRepository dataSetRepository;
 
+
     static HashMap<DataSet, Double> dataSetDoubleHashMap = new HashMap<>();
 
     private TaskletStep taskletMasterStep(String step) {
@@ -52,7 +53,8 @@ public class SpringBatch {
 
             kNNService kNN = new kNNService();
             logger.info("Step:" + step);
-            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistance();
+//            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistance();
+            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceResultRange();
             if(this.dataSetDoubleHashMap.isEmpty()) {
                 this.dataSetDoubleHashMap = dataSetDoubleHashMapLocal;
             }
@@ -77,7 +79,12 @@ public class SpringBatch {
                 Map.Entry<DataSet, Double> primeDataSetDoubleEntry = (HashMap.Entry<DataSet, Double>) this.dataSetDoubleHashMap.entrySet().toArray()[0];
                 DataSet primeDataSet = primeDataSetDoubleEntry.getKey();
                 primeDataSet.setAccuracy(primeDataSetDoubleEntry.getValue());
+                Double value = primeDataSetDoubleEntry.getValue();
+                System.out.println(value);
+                kNNService kNNService = new kNNService();
+                kNNService.PredictPriceTest(primeDataSet);
                 dataSetRepository.save(primeDataSet);
+
             }catch (Exception e) {
                 e.printStackTrace();
             }
