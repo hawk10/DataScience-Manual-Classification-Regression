@@ -16,13 +16,6 @@ public class KnnApplication {
 
 	public static void main(String[] args) {
 
-
-		kNNService kNN = new kNNService();
-//		kNN.kNNEucladianDistance();
-//		CompletableFuture.supplyAsync(kNN::kNNEucladianDistance);
-
-		ExecutorService executorService = Executors.newFixedThreadPool(2);
-
 		SpringApplication.run(KnnApplication.class, args);
 	}
 }

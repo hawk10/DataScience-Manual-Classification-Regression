@@ -33,11 +33,9 @@ public class kNNService {
                 String testInstanceCat = split[split.length - 1];
                 Double accuracy = algorithms.checkAccuracy(votedResponse, testInstanceCat);
                 totalAccuracy += accuracy;
-//				System.out.println(index + ": " + accuracy);
                 index++;
             }
             double resultAccuracy = totalAccuracy / dataSet.getTestData().size();
-//			System.out.println("Accuracy: " + resultAccuracy);
             if(resultAccuracy >0.99) {
                 dataSetMasterModel.put(dataSet,resultAccuracy);
             }

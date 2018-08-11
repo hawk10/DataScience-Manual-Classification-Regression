@@ -1,11 +1,19 @@
 package com.DS.KNN.Entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.math.BigInteger;
 import java.util.List;
 
+@Document
 public class DataSet {
 
+    @Id
+    private BigInteger id;
     private List<String> trainingData;
     private List<String> TestData;
+    private Double accuracy;
 
     public DataSet() {
     }
@@ -13,6 +21,28 @@ public class DataSet {
     public DataSet(List<String> trainingData, List<String> testData) {
         this.trainingData = trainingData;
         TestData = testData;
+    }
+
+    public DataSet(List<String> trainingData, List<String> testData, Double accuracy) {
+        this.trainingData = trainingData;
+        TestData = testData;
+        this.accuracy = accuracy;
+    }
+
+    public BigInteger getId() {
+        return id;
+    }
+
+    public void setId(BigInteger id) {
+        this.id = id;
+    }
+
+    public Double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Double accuracy) {
+        this.accuracy = accuracy;
     }
 
     public List<String> getTrainingData() {

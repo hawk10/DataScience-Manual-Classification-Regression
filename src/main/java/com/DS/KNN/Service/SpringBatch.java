@@ -1,6 +1,7 @@
 package com.DS.KNN.Service;
 
 import com.DS.KNN.Entity.DataSet;
+import com.DS.KNN.Repository.DataSetRepository;
 import com.DS.KNN.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -34,9 +36,18 @@ public class SpringBatch {
     JobBuilderFactory jobBuilderFactory;
     @Autowired
     StepBuilderFactory stepBuilderFactory;
+    @Autowired
+    DataSetRepository dataSetRepository;
 
     static HashMap<DataSet, Double> dataSetDoubleHashMap = new HashMap<>();
 
+    private TaskletStep taskletMasterStep(String step) {
+        return stepBuilderFactory.get(step).tasklet((contribution, chunkContext) -> {
+            return RepeatStatus.FINISHED;
+
+        }).build();
+
+    }
 
     private TaskletStep taskletStep(String step) {
         return stepBuilderFactory.get(step).tasklet((contribution, chunkContext) -> {
@@ -60,13 +71,17 @@ public class SpringBatch {
     }
 
     private TaskletStep taskletEnd(String step) {
+
         return stepBuilderFactory.get(step).tasklet((contribution, chunkContext) -> {
-
-            this.dataSetDoubleHashMap = Utilities.sortByComparatorDataSet(this.dataSetDoubleHashMap, false);
-            System.out.println(step + " Inside the END JOB : " + this.dataSetDoubleHashMap.size());
-            for(Map.Entry entry : this.dataSetDoubleHashMap.entrySet()) {
-                System.out.println(entry.getValue());
-
+            try {
+                this.dataSetDoubleHashMap = Utilities.sortByComparatorDataSet(this.dataSetDoubleHashMap, false);
+                System.out.println(step + " Inside the END JOB : " + this.dataSetDoubleHashMap.size());
+                Map.Entry<DataSet, Double> primeDataSetDoubleEntry = (HashMap.Entry<DataSet, Double>) this.dataSetDoubleHashMap.entrySet().toArray()[0];
+                DataSet primeDataSet = primeDataSetDoubleEntry.getKey();
+                primeDataSet.setAccuracy(primeDataSetDoubleEntry.getValue());
+                dataSetRepository.save(primeDataSet);
+            }catch (Exception e) {
+                e.printStackTrace();
             }
             return RepeatStatus.FINISHED;
 
@@ -81,7 +96,7 @@ public class SpringBatch {
     public Job parallelStepsJob() {
 
 
-        Flow masterFlow = (Flow)new FlowBuilder("master").start(taskletStep("masterJob")).build();
+        Flow masterFlow = (Flow)new FlowBuilder("master").start(taskletMasterStep("masterJob")).build();
 
         Flow flowJob1 = (Flow)new FlowBuilder("flow1").start(taskletStep("SlaveJ1")).build();
         Flow flowJob2 = (Flow)new FlowBuilder("flow2").start(taskletStep("SlaveJ2")).build();
