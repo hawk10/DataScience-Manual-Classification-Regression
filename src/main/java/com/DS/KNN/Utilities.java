@@ -6,16 +6,16 @@ import java.util.*;
 
 public class Utilities {
 
-    public Map<String, Double> sortByComparator(Map<String, Double> unsortMap, final boolean order)
+    public static HashMap<DataSet, Double> sortByComparatorDataSet(Map<DataSet, Double> unsortMap, final boolean order)
     {
 
-        List<Map.Entry<String, Double>> list = new LinkedList<Map.Entry<String, Double>>(unsortMap.entrySet());
+        List<Map.Entry<DataSet, Double>> list = new LinkedList<>(unsortMap.entrySet());
 
         // Sorting the list based on values
-        Collections.sort(list, new Comparator<Map.Entry<String, Double>>()
+        Collections.sort(list, new Comparator<Map.Entry<DataSet, Double>>()
         {
-            public int compare(Map.Entry<String, Double> o1,
-                               Map.Entry<String, Double> o2)
+            public int compare(Map.Entry<DataSet, Double> o1,
+                               Map.Entry<DataSet, Double> o2)
             {
                 if (order)
                 {
@@ -30,8 +30,8 @@ public class Utilities {
         });
 
         // Maintaining insertion order with the help of LinkedList
-        Map<String, Double> sortedMap = new LinkedHashMap<String, Double>();
-        for (Map.Entry<String, Double> entry : list)
+        HashMap<DataSet, Double> sortedMap = new LinkedHashMap<DataSet, Double>();
+        for (Map.Entry<DataSet, Double> entry : list)
         {
             sortedMap.put(entry.getKey(), entry.getValue());
         }

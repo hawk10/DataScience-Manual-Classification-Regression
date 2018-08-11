@@ -59,6 +59,23 @@ public class SpringBatch {
 
     }
 
+    private TaskletStep taskletEnd(String step) {
+        return stepBuilderFactory.get(step).tasklet((contribution, chunkContext) -> {
+
+            this.dataSetDoubleHashMap = Utilities.sortByComparatorDataSet(this.dataSetDoubleHashMap, false);
+            System.out.println(step + " Inside the END JOB : " + this.dataSetDoubleHashMap.size());
+            for(Map.Entry entry : this.dataSetDoubleHashMap.entrySet()) {
+                System.out.println(entry.getValue());
+
+            }
+            return RepeatStatus.FINISHED;
+
+
+        }).build();
+
+    }
+
+
 
     @Bean
     public Job parallelStepsJob() {
@@ -69,6 +86,7 @@ public class SpringBatch {
         Flow flowJob1 = (Flow)new FlowBuilder("flow1").start(taskletStep("SlaveJ1")).build();
         Flow flowJob2 = (Flow)new FlowBuilder("flow2").start(taskletStep("SlaveJ2")).build();
         Flow flowJob3 = (Flow)new FlowBuilder("flow3").start(taskletStep("SlaveJ3")).build();
+        Flow flowJobFinish = (Flow)new FlowBuilder("flow3").start(taskletEnd("FinishJob")).build();
 
         Flow slaveFlow = (Flow)new FlowBuilder("slaveFlow").split(new SimpleAsyncTaskExecutor()).add(flowJob1,flowJob2,flowJob3)
                 .build();
@@ -76,6 +94,7 @@ public class SpringBatch {
                 .incrementer(new RunIdIncrementer())
                 .start(masterFlow)
                 .next(slaveFlow)
+                .next(flowJobFinish)
                 .build()).build();
 
 

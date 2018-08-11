@@ -41,8 +41,8 @@ public class kNNService {
             if(resultAccuracy >0.99) {
                 dataSetMasterModel.put(dataSet,resultAccuracy);
             }
-            if(run%500 == 0) {
-//                System.out.println(run);
+            if(run%5000 == 0) {
+                System.out.println(run);
             }
             run++;
         }

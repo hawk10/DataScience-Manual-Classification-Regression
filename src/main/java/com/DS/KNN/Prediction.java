@@ -22,7 +22,7 @@ public class Prediction {
 
         }
         Utilities utilities = new Utilities();
-        Map<String, Integer> sortedMap = utilities.sortByComparatorInteger(categoryVote, true);
+        Map<String, Integer> sortedMap = utilities.sortByComparatorInteger(categoryVote, false);
         return sortedMap;
     }
 }
