@@ -1,15 +1,19 @@
 package com.DS.KNN.Service;
 
-import com.DS.KNN.Algorithms;
+import com.DS.KNN.ML.kNN.Algorithms;
 import com.DS.KNN.Entity.DataSet;
-import com.DS.KNN.Import;
-import com.DS.KNN.Neighbours;
-import com.DS.KNN.Prediction;
+import com.DS.KNN.ML.kNN.Import;
+import com.DS.KNN.ML.kNN.Neighbours;
+import com.DS.KNN.ML.kNN.Prediction;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Async
+@Service
 public class kNNService {
 
     public HashMap<DataSet, Double> kNNEucladianDistance() {
@@ -39,7 +43,7 @@ public class kNNService {
             if(resultAccuracy >0.99) {
                 dataSetMasterModel.put(dataSet,resultAccuracy);
             }
-            if(run%5000 == 0) {
+            if(run%1000 == 0) {
                 System.out.println(run);
             }
             run++;

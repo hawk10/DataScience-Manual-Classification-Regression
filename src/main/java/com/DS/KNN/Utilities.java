@@ -1,9 +1,12 @@
 package com.DS.KNN;
 
 import com.DS.KNN.Entity.DataSet;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class Utilities {
 
     public static HashMap<DataSet, Double> sortByComparatorDataSet(Map<DataSet, Double> unsortMap, final boolean order)

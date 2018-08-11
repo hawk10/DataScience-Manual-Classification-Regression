@@ -1,10 +1,13 @@
-package com.DS.KNN;
+package com.DS.KNN.ML.kNN;
 
 import com.DS.KNN.Entity.DataSet;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class Algorithms {
 
     public Double getEucladianDistance(String trainingSet, String testInstance, int range) {

@@ -1,7 +1,12 @@
-package com.DS.KNN;
+package com.DS.KNN.ML.kNN;
+
+import com.DS.KNN.Utilities;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class Prediction {
 
     public Map<String,Integer> kNNEucaladianDistancePrediction(List<Object> neighbours) {

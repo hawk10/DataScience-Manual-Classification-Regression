@@ -18,16 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @EnableBatchProcessing
 @Configuration
+@Component
 public class SpringBatch {
 
     Logger logger = LoggerFactory.getLogger(SpringBatch.class);
