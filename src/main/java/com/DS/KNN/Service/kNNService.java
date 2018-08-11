@@ -134,7 +134,7 @@ public class kNNService {
         Optional<DataSet> primeDataSet = dataSetRepository.findById("5b6f34472b4c50db84b99dbc");
         for (String testData : primeDataSet.get().getTestData()) {
             List<Object> nearestNeighbours = neighbours.getNeighboursRange(primeDataSet.get().getTrainingData(), testData, 1);
-            String[] split = primeDataSet.get().getTestData().get(4).split(",\\s*");
+            String[] split = testData.split(",\\s*");
             Double cost = Double.parseDouble(split[split.length - 1]);
             HashMap.Entry neighbourMap = (HashMap.Entry) nearestNeighbours.get(0);
 
@@ -142,16 +142,30 @@ public class kNNService {
             String[] primeKeys = primeKey.split(",\\s*");
             String primeKeyCost = primeKeys[primeKeys.length - 1];
             double costDiff = Math.abs(Double.parseDouble(primeKeyCost.toString()) - cost);
-            totalOffby += totalOffby + costDiff / cost;
-            accuracyList.add(totalOffby);
+            totalOffby = totalOffby + costDiff / cost;
+            accuracyList.add(costDiff / cost);
             System.out.println("Difference between Real Cost and Predicted cost is : " + costDiff);
             System.out.println("Off by " + costDiff / cost);
             System.out.println("Predicted Cost: " + primeKeyCost);
             System.out.println("Actual Cost: " + cost);
         }
+        Double tempMax = new Double(0);
+      for (Double value : accuracyList) {
+            if(tempMax ==0) {
+                tempMax =value;
+            }
+            else if(tempMax < value) {
+                tempMax = value;
+            }
 
-        System.out.println("Total Off By: " + totalOffby);
+      }
+        Double min = Collections.min(accuracyList);
+
+        System.out.println("Total Off By: " + totalOffby.toString());
         System.out.println("Average Accuracy: " + totalOffby/primeDataSet.get().getTestData().size());
+        System.out.println("Highest Discrepancy: " + tempMax.toString());
+        System.out.println("Lowest Discrepancy: " + min);
+
 
         return  dataSetMasterModel;
     }
