@@ -1,4 +1,4 @@
-# K-Nearest-Neighbour-kNN-
+# DataScience-Manual-Classification-Regression-
 Main Focus of this project is to manually write and implement the algorithms used in Classification and regression such as the Euclidean Distance, Linear Regression etc. This means no external library nor apis will be used to train the models. If the Linear Regression algo is used to predict a value, the linear regression algorithm will be coded manually.
 So far:-
 1) Euclidean Distance - implemented
