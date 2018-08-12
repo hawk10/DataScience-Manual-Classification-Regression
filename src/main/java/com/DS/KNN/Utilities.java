@@ -1,9 +1,15 @@
 package com.DS.KNN;
 
 import com.DS.KNN.Entity.DataSet;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 
 @Service
@@ -132,5 +138,18 @@ public class Utilities {
 
         }
         return combinedAddedReplacedNew;
+    }
+
+    public static File convertMultipartFile2File(MultipartFile multipartFile) throws Exception {
+
+
+
+        File dataFile = new File(multipartFile.getOriginalFilename());
+        dataFile.createTempFile("data",".csv");
+        FileOutputStream dataFileStream = new FileOutputStream(dataFile);
+        dataFileStream.write(multipartFile.getBytes());
+        dataFileStream.close();
+        return dataFile;
+
     }
 }
