@@ -1,6 +1,7 @@
 package com.DS.KNN;
 
 import com.DS.KNN.Entity.DataSet;
+import com.DS.KNN.ML.kNN.Algorithms;
 import com.DS.KNN.Service.kNNService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;

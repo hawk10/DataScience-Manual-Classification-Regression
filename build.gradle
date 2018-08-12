@@ -32,6 +32,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	runtime('org.hsqldb:hsqldb')
 
+	compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
+
 //	compile('org.postgresql:postgresql')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

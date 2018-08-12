@@ -87,6 +87,59 @@ public class Algorithms {
         return sqrt;
     }
 
+    public void univariateLinearRegressionTest(Double sumX, Double sumY, Double sumXY, Double sumX2, Double sumY2,Double numberOfRecords) {
+        //independent value is the value that we already have =x
+        //dependent value is to predict?? = y
+        HashMap<Double,Double> mapXY = new HashMap<>();
+
+        mapXY.put(new Double(21), new Double(65));
+        mapXY.put(new Double(25), new Double(79));
+        mapXY.put(new Double(42), new Double(75));
+//        mapXY.put(new Double(43), new Double(99));
+        mapXY.put(new Double(57), new Double(87));
+//        mapXY.put(new Double(59), new Double(81));
+
+        numberOfRecords = Double.valueOf(mapXY.size());
+        for(Map.Entry<Double,Double> entry : mapXY.entrySet()) {
+
+            sumX += entry.getKey();
+            sumY += entry.getValue();
+
+            sumX2 += Math.pow(entry.getKey(),new Double(2));
+            sumY2 += Math.pow(entry.getValue(),new Double(2));
+
+            sumXY += entry.getKey() * entry.getValue();
+
+        }
+
+        //a = y intercept
+        double SUMY_M_SUMX2 = sumY * sumX2;
+        double SUMX_M_SUMXY = sumX * sumXY;
+        double SUMX2_M_N = sumX2 * numberOfRecords;
+        double SUMX_POWER2 = Math.pow(sumX,new Double(2));
+
+        double A_TOP = SUMY_M_SUMX2 - SUMX_M_SUMXY;
+        double A_BOT = SUMX2_M_N - SUMX_POWER2;
+
+        double Y_INTERCEPT = A_TOP / A_BOT;
+
+        //b =  slope
+        double SUMXY_M_N = sumXY * numberOfRecords;
+        double SUMX_M_SUMY = sumX * sumY;
+
+        double B_TOP = SUMXY_M_N - SUMX_M_SUMY;
+        double B_BOT = SUMX2_M_N -SUMX_POWER2 ;
+
+        double SLOPE = B_TOP / B_BOT;
+
+        //y' = a + bx;
+        //answer  SLOPE + Y_INTERCEPT(INDEPENDENT VAR)
+
+        double answer = Y_INTERCEPT + SLOPE * new Double(59);
+        System.out.println(answer);
+    }
+
+
     public Double checkAccuracy(Map<String,Integer> votedResponse, String correctCategory) {
         HashMap votedCat = new HashMap();
         Double correctVote = new Double(0);
@@ -133,6 +186,8 @@ public class Algorithms {
         }
         return new Double(0);
     }
+
+
     }
 
 
