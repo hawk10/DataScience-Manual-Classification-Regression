@@ -23,7 +23,7 @@ public class kNNService {
     @Autowired
     DataSetRepository dataSetRepository;
 
-    public HashMap<DataSet, Double> kNNEucladianDistance() {
+    public HashMap<DataSet, Double> kNNEucladianDistanceClassification() {
         Import importData = new Import();
         Neighbours neighbours = new Neighbours();
         Algorithms algorithms = new Algorithms();
@@ -60,7 +60,7 @@ public class kNNService {
         return  dataSetMasterModel;
     }
 
-    public HashMap<DataSet, Double> kNNEucladianDistanceResultRange(MultipartFile dataSetFile, int range) throws  Exception{
+    public HashMap<DataSet, Double> kNNEucladianDistancepseudoRegression(MultipartFile dataSetFile, int range) throws  Exception{
 
         Import importData = new Import();
         Neighbours neighbours = new Neighbours();

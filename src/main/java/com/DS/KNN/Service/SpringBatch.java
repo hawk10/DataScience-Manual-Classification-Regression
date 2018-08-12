@@ -53,7 +53,7 @@ public class SpringBatch {
 
             kNNService kNN = new kNNService();
             logger.info("Step:" + step);
-//            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistance();
+//            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceClassification();
             HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceResultRangeJob();
             if(this.dataSetDoubleHashMap.isEmpty()) {
                 this.dataSetDoubleHashMap = dataSetDoubleHashMapLocal;

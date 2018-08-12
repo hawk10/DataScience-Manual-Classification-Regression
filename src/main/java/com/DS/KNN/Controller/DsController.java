@@ -1,7 +1,6 @@
 package com.DS.KNN.Controller;
 
 import com.DS.KNN.Entity.DataSet;
-import com.DS.KNN.Service.SpringBatch;
 import com.DS.KNN.Service.kNNService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,18 +21,18 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("ds/knn")
 public class DsController {
 
-    private static final String KNN_CAT ="/category";
-    private static final String KNN_VALUE ="/value";
+    private static final String KNN_CAT ="/classification";
+    private static final String KNN_VALUE ="/pseudoRegression";
     private static final String KNN_PREDICT ="/predict";
 
     @Autowired
     kNNService kNNService;
 
     @RequestMapping(path = KNN_CAT, method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity> launchJobCategoryRest(@RequestBody MultipartFile dataSet, int range ) {
-        return (CompletableFuture.supplyAsync(() -> launchJob(dataSet, range)));
+    public CompletableFuture<ResponseEntity> launchClassificationRest(@RequestBody MultipartFile dataSet, int range ) {
+        return (CompletableFuture.supplyAsync(() -> launchClassification(dataSet, range)));
     }
-    public ResponseEntity launchJob(MultipartFile dataSet, int range ) {
+    public ResponseEntity launchClassification(MultipartFile dataSet, int range ) {
 
         String modelID = "";
         try {
@@ -46,7 +42,7 @@ public class DsController {
                 int index = 4;
                 int start = 0;
                 while(start< index) {
-                    HashMap<DataSet, Double> datasetED = kNNService.kNNEucladianDistance();
+                    HashMap<DataSet, Double> datasetED = kNNService.kNNEucladianDistanceClassification();
                     dataSetDoubleHashMap.putAll(datasetED);
                     start++;
                 }
@@ -61,11 +57,11 @@ public class DsController {
 
     }
     @RequestMapping(path = KNN_VALUE, method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity> launchJobValueRest(@RequestBody MultipartFile dataSet, int range ) {
-        return (CompletableFuture.supplyAsync(() -> launchJobValue(dataSet,range )));
+    public CompletableFuture<ResponseEntity> launchPseudoRegressionRest(@RequestBody MultipartFile dataSet, int range ) {
+        return (CompletableFuture.supplyAsync(() -> launchpseudoRegression(dataSet,range )));
     }
     @Async
-    public ResponseEntity launchJobValue(MultipartFile dataSet, int range ) {
+    public ResponseEntity launchpseudoRegression(MultipartFile dataSet, int range ) {
 
         String modelID = "";
         try {
@@ -75,7 +71,7 @@ public class DsController {
             int index = 1;
             int start = 0;
             while(start< index) {
-            HashMap<DataSet, Double> datasetED = kNNService.kNNEucladianDistanceResultRange(dataSet,range);
+            HashMap<DataSet, Double> datasetED = kNNService.kNNEucladianDistancepseudoRegression(dataSet,range);
                     dataSetDoubleHashMap.putAll(datasetED);
                     start++;
             }
