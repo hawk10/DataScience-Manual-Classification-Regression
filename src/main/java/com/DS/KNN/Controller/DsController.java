@@ -24,7 +24,7 @@ public class DsController {
     private static final String KNN_CAT ="/classification";
     private static final String KNN_VALUE ="/pseudoRegression";
     private static final String KNN_PREDICT ="/predict";
-    private static final String KNN_TEST ="/test";
+    private static final String KNN_REGRESSION_TRAIN ="/regression_train";
 
     @Autowired
     kNNService kNNService;
@@ -107,16 +107,16 @@ public class DsController {
         return new ResponseEntity(predictPrice,HttpStatus.OK);
     }
 
-    @RequestMapping(path = KNN_TEST, method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<ResponseEntity> launchJobPredictRest() {
-        return (CompletableFuture.supplyAsync(() -> launchJobPredict()));
+    @RequestMapping(path = KNN_REGRESSION_TRAIN, method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<ResponseEntity> launchJobPredictRest(@RequestBody MultipartFile file) {
+        return (CompletableFuture.supplyAsync(() -> launchJobPredict(file)));
     }
-    public ResponseEntity launchJobPredict() {
+    public ResponseEntity launchJobPredict(MultipartFile file) {
         String predictPrice = "";
         try {
             int index = 0;
 //            while (index < 4) {
-                kNNService.UnivariateRegressionTrain();
+                kNNService.UnivariateRegressionTrain(file);
                 System.out.println("Thread: " + index );
             index++;
 //            }

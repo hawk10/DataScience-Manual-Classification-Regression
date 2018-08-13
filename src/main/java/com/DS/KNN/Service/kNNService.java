@@ -269,7 +269,7 @@ public class kNNService {
         return primeDataSetCustom.getId();
     }
 
-    public void UnivariateRegressionTrain() {
+    public void UnivariateRegressionTrain(MultipartFile file) {
 
         HashMap<DataSetCustom, Double> primeDataSet = new HashMap<>();
 
@@ -279,7 +279,8 @@ public class kNNService {
             List<Double>  accuracyList = new ArrayList<>();
 
             Import importData = new Import();
-            DataSetCustom dataSetCustom = importData.importFlowerDS("C:/Github/kNN-1/KNN/src/main/resources/avocado.csv");
+//            DataSetCustom dataSetCustom = importData.importFlowerDS("C:/Github/kNN-1/KNN/src/main/resources/avocado.csv");
+            DataSetCustom dataSetCustom = importData.readDataSet(file);
             Algorithms algorithms = new Algorithms();
             UnivariateLinearRegression univariateLinearRegressionModel = algorithms.univariateLinearRegressionGenerateModel(dataSetCustom);
 
