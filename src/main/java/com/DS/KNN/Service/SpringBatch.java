@@ -1,6 +1,6 @@
 package com.DS.KNN.Service;
 
-import com.DS.KNN.Entity.DataSet;
+import com.DS.KNN.Entity.DataSetCustom;
 import com.DS.KNN.Repository.DataSetRepository;
 import com.DS.KNN.Utilities;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class SpringBatch {
     DataSetRepository dataSetRepository;
 
 
-    static HashMap<DataSet, Double> dataSetDoubleHashMap = new HashMap<>();
+    static HashMap<DataSetCustom, Double> dataSetDoubleHashMap = new HashMap<>();
 
     private TaskletStep taskletMasterStep(String step) {
         return stepBuilderFactory.get(step).tasklet((contribution, chunkContext) -> {
@@ -53,8 +53,8 @@ public class SpringBatch {
 
             kNNService kNN = new kNNService();
             logger.info("Step:" + step);
-//            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceClassification();
-            HashMap<DataSet, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceResultRangeJob();
+//            HashMap<DataSetCustom, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceClassification();
+            HashMap<DataSetCustom, Double> dataSetDoubleHashMapLocal = kNN.kNNEucladianDistanceResultRangeJob();
             if(this.dataSetDoubleHashMap.isEmpty()) {
                 this.dataSetDoubleHashMap = dataSetDoubleHashMapLocal;
             }
@@ -76,14 +76,14 @@ public class SpringBatch {
             try {
                 this.dataSetDoubleHashMap = Utilities.sortByComparatorDataSet(this.dataSetDoubleHashMap, false);
                 System.out.println(step + " Inside the END JOB : " + this.dataSetDoubleHashMap.size());
-                Map.Entry<DataSet, Double> primeDataSetDoubleEntry = (HashMap.Entry<DataSet, Double>) this.dataSetDoubleHashMap.entrySet().toArray()[0];
-                DataSet primeDataSet = primeDataSetDoubleEntry.getKey();
-                primeDataSet.setAccuracy(primeDataSetDoubleEntry.getValue());
+                Map.Entry<DataSetCustom, Double> primeDataSetDoubleEntry = (HashMap.Entry<DataSetCustom, Double>) this.dataSetDoubleHashMap.entrySet().toArray()[0];
+                DataSetCustom primeDataSetCustom = primeDataSetDoubleEntry.getKey();
+                primeDataSetCustom.setAccuracy(primeDataSetDoubleEntry.getValue());
                 Double value = primeDataSetDoubleEntry.getValue();
                 System.out.println(value);
                 kNNService kNNService = new kNNService();
-                kNNService.PredictPriceTest(primeDataSet);
-                dataSetRepository.save(primeDataSet);
+                kNNService.PredictPriceTest(primeDataSetCustom);
+                dataSetRepository.save(primeDataSetCustom);
 
             }catch (Exception e) {
                 e.printStackTrace();

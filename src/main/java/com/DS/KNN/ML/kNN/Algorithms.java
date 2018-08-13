@@ -1,7 +1,8 @@
 package com.DS.KNN.ML.kNN;
 
-import com.DS.KNN.Entity.DataSet;
-import org.springframework.stereotype.Component;
+import com.DS.KNN.Entity.DataSetCustom;
+import com.DS.KNN.Entity.UnivariateLinearRegression;
+import com.DS.KNN.Utilities;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,10 +40,10 @@ public class Algorithms {
            return eucResult;
             }
 
-    public HashMap<String,Double> calculateEucladianDistance(DataSet dataSet, int range) {
+    public HashMap<String,Double> calculateEucladianDistance(DataSetCustom dataSetCustom, int range) {
 
-        List<String> testDataList = dataSet.getTestData();
-        List<String> trainingDataList = dataSet.getTrainingData();
+        List<String> testDataList = dataSetCustom.getTestData();
+        List<String> trainingDataList = dataSetCustom.getTrainingData();
         Double testDataED = getCustomEucladianDistance(testDataList, range);
         Double trainingDataED = getCustomEucladianDistance(trainingDataList, range);
         HashMap<String,Double> mapEd = new HashMap<>();
@@ -87,30 +88,113 @@ public class Algorithms {
         return sqrt;
     }
 
-    public void univariateLinearRegressionTest(Double sumX, Double sumY, Double sumXY, Double sumX2, Double sumY2,Double numberOfRecords) {
-        //independent value is the value that we already have =x
-        //dependent value is to predict?? = y
+    public UnivariateLinearRegression univariateLinearRegressionGenerateModel(DataSetCustom dataSetCustom) {
+
+
+        List<HashMap<Double,Double>> uniDataSet = new ArrayList<>();
+        List<Double> avgPriceList =  new ArrayList<>();
+        List<Double> totalVolumeList =  new ArrayList<>();
         HashMap<Double,Double> mapXY = new HashMap<>();
+        Double sumX =  new Double(0);
+        Double sumY =  new Double(0);
+        Double sumXY =  new Double(0);
+        Double sumX2 =  new Double(0);
+        Double sumY2 =  new Double(0);
+        Double numberOfRecords = Double.valueOf(dataSetCustom.getTrainingData().size());
 
-        mapXY.put(new Double(21), new Double(65));
-        mapXY.put(new Double(25), new Double(79));
-        mapXY.put(new Double(42), new Double(75));
-//        mapXY.put(new Double(43), new Double(99));
-        mapXY.put(new Double(57), new Double(87));
-//        mapXY.put(new Double(59), new Double(81));
+        Double minX = new Double(0);
+        Double minY = new Double(0);
+        Double maxX = new Double(0);
+        Double maxY = new Double(0);
 
-        numberOfRecords = Double.valueOf(mapXY.size());
-        for(Map.Entry<Double,Double> entry : mapXY.entrySet()) {
+        for( String trainingData : dataSetCustom.getTrainingData()) {
 
-            sumX += entry.getKey();
-            sumY += entry.getValue();
+            List<String> dataLine = Arrays.asList(trainingData.split(",\\s*"));
+            Double averagePrice = Double.parseDouble(dataLine.get(2));
+            Double totalVolume = Double.parseDouble(dataLine.get(3));
+            avgPriceList.add(averagePrice);
+            totalVolumeList.add(totalVolume);
+            sumX += totalVolume;
+            sumY += averagePrice;
+            if(maxX == 0) {
+                maxX = totalVolume;
+            }
+            else if (maxX < totalVolume ) {
 
-            sumX2 += Math.pow(entry.getKey(),new Double(2));
-            sumY2 += Math.pow(entry.getValue(),new Double(2));
+                maxX = totalVolume;
 
-            sumXY += entry.getKey() * entry.getValue();
+            }
+
+            if(maxY == 0) {
+                maxY = averagePrice;
+            }
+            else if (maxY < averagePrice ) {
+
+                maxY = averagePrice;
+
+            }
+
+            if(minX == 0) {
+                minX = totalVolume;
+            }
+            else if (minX > totalVolume ) {
+
+                minX = totalVolume;
+
+            }
+
+            if(minY == 0) {
+                minY = averagePrice;
+            }
+            else if (minY > averagePrice ) {
+
+                minY = averagePrice;
+
+            }
+//
+//            sumX2 += Math.pow(totalVolume,new Double(2));
+//            sumY2 += Math.pow(averagePrice,new Double(2));
+//
+//            sumXY += totalVolume * averagePrice;
 
         }
+
+        Double meanX = sumX/numberOfRecords;
+        Double meanY = sumY/numberOfRecords;
+        double avgPriceSD = Utilities.calculateSD(avgPriceList);
+        double totalVolumeSD = Utilities.calculateSD(totalVolumeList);
+        // data - mean/std
+
+        sumX = new Double(0);
+        sumY = new Double(0);
+
+
+
+        for( String trainingData : dataSetCustom.getTrainingData()) {
+
+            List<String> dataLine = Arrays.asList(trainingData.split(",\\s*"));
+            Double averagePrice = Double.parseDouble(dataLine.get(2));
+            Double totalVolume = Double.parseDouble(dataLine.get(3));
+
+//            double avgPriceNormalized = (averagePrice - meanY) / avgPriceSD;
+//            double totalVolumeNormalized = (totalVolume - meanX) / totalVolumeSD;
+
+            double totalVolumeNormalized  =(totalVolume  - minX)/(maxX-minX);
+            double avgPriceNormalized = (averagePrice- minY)/(maxY-minY);
+
+            sumX += totalVolumeNormalized;
+            sumY += avgPriceNormalized;
+
+            sumX2 += Math.pow(totalVolumeNormalized,new Double(2));
+            sumY2 += Math.pow(avgPriceNormalized,new Double(2));
+
+            sumXY += totalVolumeNormalized * avgPriceNormalized;
+
+        }
+
+
+        //independent value is the value that we already have =x
+        //dependent value is to predict?? = y
 
         //a = y intercept
         double SUMY_M_SUMX2 = sumY * sumX2;
@@ -135,8 +219,21 @@ public class Algorithms {
         //y' = a + bx;
         //answer  SLOPE + Y_INTERCEPT(INDEPENDENT VAR)
 
-        double answer = Y_INTERCEPT + SLOPE * new Double(59);
-        System.out.println(answer);
+
+        UnivariateLinearRegression univariateLinearRegression = new UnivariateLinearRegression(SLOPE,Y_INTERCEPT,maxY,minY,
+                maxX,minX);
+
+        return univariateLinearRegression;
+    }
+
+    public Double univariateLinearRegressionPredict(UnivariateLinearRegression model) {
+
+        double avgPriceNormalized = (model.getValue()- model.getMinX())/(model.getMaxX()-model.getMinX());
+
+        double normalziedAnswer = model.getyIntercept() + model.getSlope() * avgPriceNormalized;
+        double denormalziedAnswer = normalziedAnswer * (model.getMaxY() - model.getMinY()) + model.getMinY();
+//        System.out.println(model.getValue());
+        return denormalziedAnswer;
     }
 
 

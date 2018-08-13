@@ -1,7 +1,8 @@
 package com.DS.KNN.Service;
 
+import com.DS.KNN.Entity.DataSetCustom;
+import com.DS.KNN.Entity.UnivariateLinearRegression;
 import com.DS.KNN.ML.kNN.Algorithms;
-import com.DS.KNN.Entity.DataSet;
 import com.DS.KNN.ML.kNN.Import;
 import com.DS.KNN.ML.kNN.Neighbours;
 import com.DS.KNN.ML.kNN.Prediction;
@@ -12,34 +13,32 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.InputStream;
 import java.util.*;
 
-//@Async
+@Async
 @Service
 public class kNNService {
 
     @Autowired
     DataSetRepository dataSetRepository;
 
-    public HashMap<DataSet, Double> kNNEucladianDistanceClassification() {
+    public HashMap<DataSetCustom, Double> kNNEucladianDistanceClassification() {
         Import importData = new Import();
         Neighbours neighbours = new Neighbours();
         Algorithms algorithms = new Algorithms();
         Prediction prediction = new Prediction();
         int run = 0;
 
-        HashMap<DataSet, Double> dataSetMasterModel = new HashMap();
+        HashMap<DataSetCustom, Double> dataSetMasterModel = new HashMap();
 
         while (run < 1000) {
-//            DataSet dataSet = importData.importFlowerDS("src/main/resources/iris.data.txt");
-            DataSet dataSet = importData.importFlowerDS("src/main/resources/insurance2.csv");
-            HashMap<String, Double> stringIntegerHashMap = algorithms.calculateEucladianDistance(dataSet, 5);
+//            DataSetCustom dataSetCustom = importData.importFlowerDS("src/main/resources/iris.data.txt");
+            DataSetCustom dataSetCustom = importData.importFlowerDS("src/main/resources/insurance2.csv");
+            HashMap<String, Double> stringIntegerHashMap = algorithms.calculateEucladianDistance(dataSetCustom, 5);
             int index = 1;
             Double totalAccuracy = new Double(0);
-            for (String testData : dataSet.getTestData()) {
-                List<Object> nearestNeighbours = neighbours.getNeighbours(dataSet.getTrainingData(), testData, 7);
+            for (String testData : dataSetCustom.getTestData()) {
+                List<Object> nearestNeighbours = neighbours.getNeighbours(dataSetCustom.getTrainingData(), testData, 7);
                 Map<String, Integer> votedResponse = prediction.kNNEucaladianDistancePrediction(nearestNeighbours);
                 String[] split = testData.split(",\\s*");
                 String testInstanceCat = split[split.length - 1];
@@ -47,9 +46,9 @@ public class kNNService {
                 totalAccuracy += accuracy;
                 index++;
             }
-            double resultAccuracy = totalAccuracy / dataSet.getTestData().size();
+            double resultAccuracy = totalAccuracy / dataSetCustom.getTestData().size();
             if(resultAccuracy >0.50) {
-                dataSetMasterModel.put(dataSet,resultAccuracy);
+                dataSetMasterModel.put(dataSetCustom,resultAccuracy);
             }
             if(run%10 == 0) {
                 System.out.println(run);
@@ -60,7 +59,7 @@ public class kNNService {
         return  dataSetMasterModel;
     }
 
-    public HashMap<DataSet, Double> kNNEucladianDistancepseudoRegression(MultipartFile dataSetFile, int range) throws  Exception{
+    public HashMap<DataSetCustom, Double> kNNEucladianDistancepseudoRegression(MultipartFile dataSetFile, int range) throws  Exception{
 
         Import importData = new Import();
         Neighbours neighbours = new Neighbours();
@@ -68,18 +67,18 @@ public class kNNService {
         Prediction prediction = new Prediction();
         int run = 0;
 
-        HashMap<DataSet, Double> dataSetMasterModel = new HashMap();
-        HashMap<DataSet, Double> rejectedModels = new HashMap();
+        HashMap<DataSetCustom, Double> dataSetMasterModel = new HashMap();
+        HashMap<DataSetCustom, Double> rejectedModels = new HashMap();
 
         while (run < 200) {
 
 
-            DataSet dataSet = importData.readDataSet(dataSetFile);
-            HashMap<String, Double> stringIntegerHashMap = algorithms.calculateEucladianDistance(dataSet, range);
+            DataSetCustom dataSetCustom = importData.readDataSet(dataSetFile);
+            HashMap<String, Double> stringIntegerHashMap = algorithms.calculateEucladianDistance(dataSetCustom, range);
             int index = 1;
             Double totalAccuracy = new Double(0);
-            for (String testData : dataSet.getTestData()) {
-                List<Object> nearestNeighbours = neighbours.getNeighboursRange(dataSet.getTrainingData(), testData, 5);
+            for (String testData : dataSetCustom.getTestData()) {
+                List<Object> nearestNeighbours = neighbours.getNeighboursRange(dataSetCustom.getTrainingData(), testData, 5);
                 Map<String, Integer> votedResponse = prediction.kNNEucaladianDistancePredictionRange(nearestNeighbours);
                 String[] split = testData.split(",\\s*");
                 String testInstanceCat = split[split.length - 1];
@@ -87,12 +86,12 @@ public class kNNService {
                 totalAccuracy += accuracy;
                 index++;
             }
-            double resultAccuracy = totalAccuracy / dataSet.getTestData().size();
+            double resultAccuracy = totalAccuracy / dataSetCustom.getTestData().size();
             if(resultAccuracy >0.15) {
-                dataSetMasterModel.put(dataSet,resultAccuracy);
+                dataSetMasterModel.put(dataSetCustom,resultAccuracy);
             }
             else{
-                rejectedModels.put(dataSet,resultAccuracy);
+                rejectedModels.put(dataSetCustom,resultAccuracy);
             }
             if(run%100 == 0) {
                 System.out.println(run);
@@ -103,24 +102,24 @@ public class kNNService {
         return  dataSetMasterModel;
     }
 
-    public HashMap<DataSet, Double> kNNEucladianDistanceResultRangeJob() {
+    public HashMap<DataSetCustom, Double> kNNEucladianDistanceResultRangeJob() {
         Import importData = new Import();
         Neighbours neighbours = new Neighbours();
         Algorithms algorithms = new Algorithms();
         Prediction prediction = new Prediction();
         int run = 0;
 
-        HashMap<DataSet, Double> dataSetMasterModel = new HashMap();
-        HashMap<DataSet, Double> rejectedModels = new HashMap();
+        HashMap<DataSetCustom, Double> dataSetMasterModel = new HashMap();
+        HashMap<DataSetCustom, Double> rejectedModels = new HashMap();
 
         while (run < 1000) {
-//            DataSet dataSet = importData.importFlowerDS("src/main/resources/iris.data.txt");
-            DataSet dataSet = importData.importFlowerDS("src/main/resources/insurance2.csv");
-            HashMap<String, Double> stringIntegerHashMap = algorithms.calculateEucladianDistance(dataSet, 5);
+//            DataSetCustom dataSetCustom = importData.importFlowerDS("src/main/resources/iris.data.txt");
+            DataSetCustom dataSetCustom = importData.importFlowerDS("src/main/resources/insurance2.csv");
+            HashMap<String, Double> stringIntegerHashMap = algorithms.calculateEucladianDistance(dataSetCustom, 5);
             int index = 1;
             Double totalAccuracy = new Double(0);
-            for (String testData : dataSet.getTestData()) {
-                List<Object> nearestNeighbours = neighbours.getNeighboursRange(dataSet.getTrainingData(), testData, 5);
+            for (String testData : dataSetCustom.getTestData()) {
+                List<Object> nearestNeighbours = neighbours.getNeighboursRange(dataSetCustom.getTrainingData(), testData, 5);
                 Map<String, Integer> votedResponse = prediction.kNNEucaladianDistancePredictionRange(nearestNeighbours);
                 String[] split = testData.split(",\\s*");
                 String testInstanceCat = split[split.length - 1];
@@ -128,12 +127,12 @@ public class kNNService {
                 totalAccuracy += accuracy;
                 index++;
             }
-            double resultAccuracy = totalAccuracy / dataSet.getTestData().size();
+            double resultAccuracy = totalAccuracy / dataSetCustom.getTestData().size();
             if(resultAccuracy >0.15) {
-                dataSetMasterModel.put(dataSet,resultAccuracy);
+                dataSetMasterModel.put(dataSetCustom,resultAccuracy);
             }
             else{
-                rejectedModels.put(dataSet,resultAccuracy);
+                rejectedModels.put(dataSetCustom,resultAccuracy);
             }
             if(run%100 == 0) {
                 System.out.println(run);
@@ -144,18 +143,18 @@ public class kNNService {
         return  dataSetMasterModel;
     }
 
-    public HashMap<DataSet, Double> PredictPriceTest(DataSet primeDataSet) {
+    public HashMap<DataSetCustom, Double> PredictPriceTest(DataSetCustom primeDataSetCustom) {
         Neighbours neighbours = new Neighbours();
         Algorithms algorithms = new Algorithms();
         Prediction prediction = new Prediction();
 
-        HashMap<DataSet, Double> dataSetMasterModel = new HashMap();
-        HashMap<DataSet, Double> rejectedModels = new HashMap();
+        HashMap<DataSetCustom, Double> dataSetMasterModel = new HashMap();
+        HashMap<DataSetCustom, Double> rejectedModels = new HashMap();
 
             Double totalAccuracy = new Double(0);
-                List<Object> nearestNeighbours = neighbours.getNeighboursRange(primeDataSet.getTrainingData(), primeDataSet.getTestData().get(4), 1);
+                List<Object> nearestNeighbours = neighbours.getNeighboursRange(primeDataSetCustom.getTrainingData(), primeDataSetCustom.getTestData().get(4), 1);
                 Map<String, Integer> votedResponse = prediction.kNNEucaladianDistancePredictionRange(nearestNeighbours);
-                String[] split = primeDataSet.getTestData().get(4).split(",\\s*");
+                String[] split = primeDataSetCustom.getTestData().get(4).split(",\\s*");
                 String testInstanceCat = split[split.length - 1];
                 Double accuracy = algorithms.checkAccuracyInRange(votedResponse, testInstanceCat);
                 Double cost = Double.parseDouble(split[split.length - 1]);
@@ -176,11 +175,11 @@ public class kNNService {
     public String PredictPrice(String id, String criteria) {
 
         Neighbours neighbours = new Neighbours();
-        HashMap<DataSet, Double> dataSetMasterModel = new HashMap();
+        HashMap<DataSetCustom, Double> dataSetMasterModel = new HashMap();
         Double totalOffby = new Double(0);
         List<Double>  accuracyList = new ArrayList<>();
         id = "5b6f34472b4c50db84b99dbc";
-        Optional<DataSet> primeDataSet = dataSetRepository.findById(id);
+        Optional<DataSetCustom> primeDataSet = dataSetRepository.findById(id);
 
             List<Object> nearestNeighbours = neighbours.getNeighboursRange(primeDataSet.get().getTrainingData(), criteria, 1);
             HashMap.Entry neighbourMap = (HashMap.Entry) nearestNeighbours.get(0);
@@ -213,12 +212,12 @@ public class kNNService {
 
     }
 
-        public HashMap<DataSet, Double> PredictPriceTrainingTest() {
+        public HashMap<DataSetCustom, Double> PredictPriceTrainingTest() {
         Neighbours neighbours = new Neighbours();
-        HashMap<DataSet, Double> dataSetMasterModel = new HashMap();
+        HashMap<DataSetCustom, Double> dataSetMasterModel = new HashMap();
         Double totalOffby = new Double(0);
         List<Double>  accuracyList = new ArrayList<>();
-        Optional<DataSet> primeDataSet = dataSetRepository.findById("5b6f34472b4c50db84b99dbc");
+        Optional<DataSetCustom> primeDataSet = dataSetRepository.findById("5b6f34472b4c50db84b99dbc");
         for (String testData : primeDataSet.get().getTestData()) {
             List<Object> nearestNeighbours = neighbours.getNeighboursRange(primeDataSet.get().getTrainingData(), testData, 1);
             String[] split = testData.split(",\\s*");
@@ -258,16 +257,83 @@ public class kNNService {
         return  dataSetMasterModel;
     }
 
-    public String saveModelHighestAccuracy(HashMap<DataSet, Double> dataSetDoubleHashMap) {
+    public String saveModelHighestAccuracy(HashMap<DataSetCustom, Double> dataSetDoubleHashMap) {
         dataSetDoubleHashMap = Utilities.sortByComparatorDataSet(dataSetDoubleHashMap, false);
-        Map.Entry<DataSet, Double> primeDataSetDoubleEntry = (HashMap.Entry<DataSet, Double>) dataSetDoubleHashMap.entrySet().toArray()[0];
-        DataSet primeDataSet = primeDataSetDoubleEntry.getKey();
-        primeDataSet.setAccuracy(primeDataSetDoubleEntry.getValue());
+        Map.Entry<DataSetCustom, Double> primeDataSetDoubleEntry = (HashMap.Entry<DataSetCustom, Double>) dataSetDoubleHashMap.entrySet().toArray()[0];
+        DataSetCustom primeDataSetCustom = primeDataSetDoubleEntry.getKey();
+        primeDataSetCustom.setAccuracy(primeDataSetDoubleEntry.getValue());
         Double value = primeDataSetDoubleEntry.getValue();
         System.out.println(value);
 
-        DataSet save = dataSetRepository.save(primeDataSet);
-        return primeDataSet.getId();
+        DataSetCustom save = dataSetRepository.save(primeDataSetCustom);
+        return primeDataSetCustom.getId();
+    }
+
+    public void UnivariateRegressionTrain() {
+
+        HashMap<DataSetCustom, Double> primeDataSet = new HashMap<>();
+
+        int index = 0;
+        while (index < 400) {
+            Double totalOffby = new Double(0);
+            List<Double>  accuracyList = new ArrayList<>();
+
+            Import importData = new Import();
+            DataSetCustom dataSetCustom = importData.importFlowerDS("C:/Github/kNN-1/KNN/src/main/resources/avocado.csv");
+            Algorithms algorithms = new Algorithms();
+            UnivariateLinearRegression univariateLinearRegressionModel = algorithms.univariateLinearRegressionGenerateModel(dataSetCustom);
+
+            for (String testData : dataSetCustom.getTestData()) {
+                List<String> dataLine = Arrays.asList(testData.split(",\\s*"));
+                Double averagePrice = Double.parseDouble(dataLine.get(2));
+                Double totalVolume = Double.parseDouble(dataLine.get(3));
+                univariateLinearRegressionModel.setValue(totalVolume);
+                Double predictedValue = algorithms.univariateLinearRegressionPredict(univariateLinearRegressionModel);
+                Double priceDiff = Math.abs(predictedValue-averagePrice);
+//                System.out.println("Actual Cost: " + averagePrice);
+//                System.out.println("Predicted Cost: " + predictedValue);
+//                System.out.println("Off By : " + priceDiff);
+//                System.out.println("Off By % : " + priceDiff/averagePrice);
+                totalOffby = totalOffby + priceDiff/averagePrice;
+                accuracyList.add(1-priceDiff/averagePrice);
+
+            }
+
+            Double tempMax = new Double(0);
+
+            for (Double value : accuracyList) {
+                if(tempMax ==0) {
+                    tempMax =value;
+                }
+                else if(tempMax < value) {
+                    tempMax = value;
+                }
+//                System.out.println(value);
+
+            }
+            Double min = Collections.min(accuracyList);
+
+//            System.out.println("Total Off By: " + totalOffby);
+            double avgAccuracy = 1 - totalOffby / dataSetCustom.getTestData().size();
+            System.out.println("Average Accuracy: " + avgAccuracy);
+//            System.out.println("Highest Discrepancy: " + tempMax.toString());
+//            System.out.println("Lowest Discrepancy: " + min);
+
+            if( avgAccuracy > 0.75 ) {
+                primeDataSet.put(dataSetCustom, totalOffby/ dataSetCustom.getTestData().size());
+            }
+
+            if(index%200 == 0) {
+                System.out.println(index);
+            }
+
+        index++;
+        }
+
+        System.out.println(primeDataSet);
+        System.out.println(primeDataSet.size());
+
+
     }
 
 }

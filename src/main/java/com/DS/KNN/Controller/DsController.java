@@ -1,6 +1,6 @@
 package com.DS.KNN.Controller;
 
-import com.DS.KNN.Entity.DataSet;
+import com.DS.KNN.Entity.DataSetCustom;
 import com.DS.KNN.Service.kNNService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,7 @@ public class DsController {
     private static final String KNN_CAT ="/classification";
     private static final String KNN_VALUE ="/pseudoRegression";
     private static final String KNN_PREDICT ="/predict";
+    private static final String KNN_TEST ="/test";
 
     @Autowired
     kNNService kNNService;
@@ -37,12 +38,12 @@ public class DsController {
         String modelID = "";
         try {
 
-                HashMap<DataSet, Double> dataSetDoubleHashMap = new HashMap<>();
+                HashMap<DataSetCustom, Double> dataSetDoubleHashMap = new HashMap<>();
 
                 int index = 4;
                 int start = 0;
                 while(start< index) {
-                    HashMap<DataSet, Double> datasetED = kNNService.kNNEucladianDistanceClassification();
+                    HashMap<DataSetCustom, Double> datasetED = kNNService.kNNEucladianDistanceClassification();
                     dataSetDoubleHashMap.putAll(datasetED);
                     start++;
                 }
@@ -66,12 +67,12 @@ public class DsController {
         String modelID = "";
         try {
 
-            HashMap<DataSet, Double> dataSetDoubleHashMap = new HashMap<>();
+            HashMap<DataSetCustom, Double> dataSetDoubleHashMap = new HashMap<>();
 
             int index = 1;
             int start = 0;
             while(start< index) {
-            HashMap<DataSet, Double> datasetED = kNNService.kNNEucladianDistancepseudoRegression(dataSet,range);
+            HashMap<DataSetCustom, Double> datasetED = kNNService.kNNEucladianDistancepseudoRegression(dataSet,range);
                     dataSetDoubleHashMap.putAll(datasetED);
                     start++;
             }
@@ -105,5 +106,28 @@ public class DsController {
 
         return new ResponseEntity(predictPrice,HttpStatus.OK);
     }
+
+    @RequestMapping(path = KNN_TEST, method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<ResponseEntity> launchJobPredictRest() {
+        return (CompletableFuture.supplyAsync(() -> launchJobPredict()));
+    }
+    public ResponseEntity launchJobPredict() {
+        String predictPrice = "";
+        try {
+            int index = 0;
+//            while (index < 4) {
+                kNNService.UnivariateRegressionTrain();
+                System.out.println("Thread: " + index );
+            index++;
+//            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity(predictPrice,HttpStatus.OK);
+    }
+
 
 }

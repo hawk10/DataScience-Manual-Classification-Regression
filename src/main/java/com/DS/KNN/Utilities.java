@@ -1,30 +1,30 @@
 package com.DS.KNN;
 
-import com.DS.KNN.Entity.DataSet;
-import org.apache.tomcat.util.http.fileupload.FileItem;
-import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
-import org.springframework.stereotype.Component;
+import com.DS.KNN.Entity.DataSetCustom;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.*;
 
 @Service
 public class Utilities {
 
-    public static HashMap<DataSet, Double> sortByComparatorDataSet(Map<DataSet, Double> unsortMap, final boolean order)
+    public static HashMap<DataSetCustom, Double> sortByComparatorDataSet(Map<DataSetCustom, Double> unsortMap, final boolean order)
     {
 
-        List<Map.Entry<DataSet, Double>> list = new LinkedList<>(unsortMap.entrySet());
+        List<Map.Entry<DataSetCustom, Double>> list = new LinkedList<>(unsortMap.entrySet());
 
         // Sorting the list based on values
-        Collections.sort(list, new Comparator<Map.Entry<DataSet, Double>>()
+        Collections.sort(list, new Comparator<Map.Entry<DataSetCustom, Double>>()
         {
-            public int compare(Map.Entry<DataSet, Double> o1,
-                               Map.Entry<DataSet, Double> o2)
+            public int compare(Map.Entry<DataSetCustom, Double> o1,
+                               Map.Entry<DataSetCustom, Double> o2)
             {
                 if (order)
                 {
@@ -39,8 +39,8 @@ public class Utilities {
         });
 
         // Maintaining insertion order with the help of LinkedList
-        HashMap<DataSet, Double> sortedMap = new LinkedHashMap<DataSet, Double>();
-        for (Map.Entry<DataSet, Double> entry : list)
+        HashMap<DataSetCustom, Double> sortedMap = new LinkedHashMap<DataSetCustom, Double>();
+        for (Map.Entry<DataSetCustom, Double> entry : list)
         {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
@@ -81,19 +81,19 @@ public class Utilities {
         return sortedMap;
     }
 
-    public static Map<DataSet,Double> combineMaps(Map<DataSet,Double> map1 , Map<DataSet,Double> map2) {
-        Map<DataSet, Double> combinedAddedReplacedNew = new HashMap<>();
+    public static Map<DataSetCustom,Double> combineMaps(Map<DataSetCustom,Double> map1 , Map<DataSetCustom,Double> map2) {
+        Map<DataSetCustom, Double> combinedAddedReplacedNew = new HashMap<>();
         try {
 
-            for (Map.Entry<DataSet, Double> added : map1.entrySet()) {
+            for (Map.Entry<DataSetCustom, Double> added : map1.entrySet()) {
 
                 Double addedValue = added.getValue();
-                DataSet addedKey = added.getKey();
+                DataSetCustom addedKey = added.getKey();
 
                 //inner loops beings
-                for (Map.Entry<DataSet, Double> replaced : map2.entrySet()) {
+                for (Map.Entry<DataSetCustom, Double> replaced : map2.entrySet()) {
 
-                    DataSet replacedKey = replaced.getKey();
+                    DataSetCustom replacedKey = replaced.getKey();
                     Double replacedValue = replaced.getValue();
 
                     if (replacedKey.equals(addedKey)) {
@@ -151,5 +151,41 @@ public class Utilities {
         dataFileStream.close();
         return dataFile;
 
+    }
+
+    public static List<Map<String,String>> convertMultipartFile2CSV2Map(File file) {
+
+
+        List<Map<String,String>> mapList = new ArrayList<>();
+        try {
+//        CSVParser csvParsed = CSVParser.parse(Utilities.convertMultipartFile2File(file), Charset.defaultCharset(), CSVFormat.RFC4180);
+            Reader fileReader = new FileReader(file);
+            Iterable<CSVRecord> csvParsed = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(fileReader);
+
+            for (CSVRecord record : csvParsed) {
+
+                mapList.add(record.toMap());
+
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mapList;
+    }
+
+    public static double calculateSD(List<Double> valueList) {
+        double sum = 0.0, standardDeviation = 0.0;
+
+        for(double num : valueList) {
+            sum += num;
+        }
+
+        double mean = sum/10;
+
+        for(double num: valueList) {
+            standardDeviation += Math.pow(num - mean, 2);
+        }
+
+        return Math.sqrt(standardDeviation/10);
     }
 }

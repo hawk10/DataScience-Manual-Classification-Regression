@@ -7,7 +7,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Document
-public class DataSet {
+public class DataSetCustom {
 
     @Id
     private String id;
@@ -15,15 +15,15 @@ public class DataSet {
     private List<String> TestData;
     private Double accuracy;
 
-    public DataSet() {
+    public DataSetCustom() {
     }
 
-    public DataSet(List<String> trainingData, List<String> testData) {
+    public DataSetCustom(List<String> trainingData, List<String> testData) {
         this.trainingData = trainingData;
         TestData = testData;
     }
 
-    public DataSet(List<String> trainingData, List<String> testData, Double accuracy) {
+    public DataSetCustom(List<String> trainingData, List<String> testData, Double accuracy) {
         this.trainingData = trainingData;
         TestData = testData;
         this.accuracy = accuracy;
@@ -60,4 +60,6 @@ public class DataSet {
     public void setTestData(List<String> testData) {
         TestData = testData;
     }
+
+
 }
